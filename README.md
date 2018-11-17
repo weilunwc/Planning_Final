@@ -45,3 +45,10 @@ python ./altitude_control.py -$ROBOT_NUM -$MIN_HEIGHT
 ```
 Here `MIN_HEIGHT` is the threshold when the z-direction velocity stops publishing, so they might go beyond the height a bit (or a lot depent on the setting of twist).  
 
+
+### Generate Map ###
+
+Starting from a 2D map, we will need to use the map server package
+```
+sudp apt-get install ros-kinetic-map-server
+```
