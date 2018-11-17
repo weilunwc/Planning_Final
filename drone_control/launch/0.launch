@@ -1,0 +1,234 @@
+<launch>
+
+<!-- Benchmark trial generated on: 2018-11-17 at 12:42 -->
+
+<!-- Trial Name-->
+<rosparam param="trial_name">distributed_perception</rosparam>
+<rosparam param="connectivity_radius">10.000000</rosparam>
+
+==================== FIXED CONTENT ==================
+
+<rosparam param="swarm_prefix">"swarmbot"</rosparam>
+<rosparam param="use_sim_time">true</rosparam>
+<rosparam param="framework_mode">"BENCHMARKING"</rosparam>
+
+<node name="benchmark_trial" pkg="cmuswarm_performance" type="benchmark_trial" output="screen"></node>
+
+<rosparam param="behaviours">[{'name':'move_to_goal_bc','centralized':false,'bandwidth':8},
+{'name':'bc_biased_flocking','centralized':false,'bandwidth':8},
+{'name':'move_to_goal','centralized':false,'bandwidth':8}]
+</rosparam>
+
+<node name="main_controller" pkg="cmuswarm_core" type="main_controller">
+</node>
+<node name="request_handler" pkg="cmuswarm_core" type="request_handler" output="screen">
+</node>
+<node name="ellipse_planner" pkg="cmuswarm_swarm" type="ellipse_planner" output="screen">
+</node>
+<node name="connectivity" pkg="cmuswarm_core" type="connectivity" output="screen">
+</node>
+<node name="message_communication" pkg="cmuswarm_core" type="message_communication" output="screen">
+</node>
+<node name="rviz" pkg="rviz" type="rviz">
+</node>
+<node name="gazebo_drawing" pkg="cmuswarm_visual" type="gazebo_drawing" output="screen">
+</node>
+
+<rosparam param="performance_summarizer/benchmark_trial_metrics">["work"]</rosparam>
+
+<node name="performance_summarizer" pkg="cmuswarm_performance" type="performance_summarizer_node.py" output="screen" required="true">
+<param name="save_file_path" value="$(find cmuswarm_performance)/results/performance.xlsx"/>
+</node>
+
+==================== PERFORMANCE SUMMARIZERS ==================
+<node name="work_summarizer" pkg="cmuswarm_performance" type="work_summarizer" > 
+<rosparam param="termination_conditions/max_execution_time">100000.000000</rosparam>
+</node>
+
+
+==================== BEHAVIOUR REQUESTS ==================
+<rosparam>
+/benchmark_trial/behaviour_requests:
+    -
+        name: distributed_perception
+        time: 1
+</rosparam>
+
+=========== SIMULATION INITIALIZATION ============
+
+<include file="$(find gazebo_ros)/launch/empty_world.launch">     
+<arg name="world_name" value="$(find cmuswarm_swarm)/world/big_arena.world/big_arena.world.world"/>
+<arg name="paused" value="true"/>
+<arg name="use_sim_time" value="true"/>
+<arg name="gui" value="true"/>
+<arg name="recording" value="false"/>
+<arg name="debug" value="false"/>
+</include>
+
+=========== SWARM GENERATION ============
+<rosparam param="robot_ids">[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]</rosparam>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot0"/>
+<arg name="init_pose" value="-x 7.974838 -y 21.562053 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot1"/>
+<arg name="init_pose" value="-x 13.750038 -y 13.658198 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot2"/>
+<arg name="init_pose" value="-x 9.125707 -y 23.683304 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot3"/>
+<arg name="init_pose" value="-x 14.727903 -y 21.439998 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot4"/>
+<arg name="init_pose" value="-x 8.754478 -y 31.399437 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot5"/>
+<arg name="init_pose" value="-x 7.649738 -y 29.375581 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot6"/>
+<arg name="init_pose" value="-x 5.527248 -y 40.582134 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot7"/>
+<arg name="init_pose" value="-x 8.684169 -y 40.650623 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot8"/>
+<arg name="init_pose" value="-x 15.296034 -y 33.631653 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot9"/>
+<arg name="init_pose" value="-x 12.130795 -y 11.566382 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot10"/>
+<arg name="init_pose" value="-x 10.699862 -y 22.400282 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot11"/>
+<arg name="init_pose" value="-x 1.124441 -y 29.784239 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot12"/>
+<arg name="init_pose" value="-x 6.707153 -y 18.580969 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot13"/>
+<arg name="init_pose" value="-x 12.556971 -y 19.637680 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot14"/>
+<arg name="init_pose" value="-x 4.720913 -y 30.747427 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot15"/>
+<arg name="init_pose" value="-x 17.400433 -y 7.737754 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot16"/>
+<arg name="init_pose" value="-x 8.853761 -y 5.241247 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot17"/>
+<arg name="init_pose" value="-x 1.130734 -y 32.448311 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot18"/>
+<arg name="init_pose" value="-x 2.982283 -y 10.138535 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+<include file="$(find cmuswarm_swarm)/launch/one_robot.launch">     
+<arg name="robot_name" value="swarmbot19"/>
+<arg name="init_pose" value="-x 2.838674 -y 15.123813 -z 0"/>
+<arg name="behaviour_lib" value="test_distributed_perception_behaviour"/>
+<arg name="calculator_lib" value="default_calculators"/>
+<arg name="driver_lib" value="uav"/>
+</include>
+
+==================== TOPIC LOGGERS ==================
+
+
+</launch>

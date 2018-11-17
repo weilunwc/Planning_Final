@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot_name" default="robot"/>
+    <arg name="init_pose" default="-x 0 -y 0 -z 0"/>
+    <param name="height" value="3.0"/>
+    <!-- this driver configs loads the robot for gazebo. -->
+    
+    <param name="height" value="3"/>
+    <include file="$(find hector_quadrotor_gazebo)/launch/test_spawn_quadrotor.launch" >
+        <arg name="name" value="$(arg robot_name)" />
+        <arg name="model" value="$(find hector_quadrotor_description)/urdf/test_quadrotor.gazebo.xacro"/>
+        <arg name="controllers" value="
+            controller/attitude
+            controller/velocity
+            controller/position
+            "/>
+        <arg name="init_pose" value="$(arg init_pose)" />
+    </include>
+    
+    <!-- activate motors-->
+    <!--<node name="uav_activate" pkg="drone_control" type="uav_enable_motor.py"/>-->
+</launch>
