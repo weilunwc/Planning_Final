@@ -7,9 +7,7 @@ The robotic platform we are going to work with is the hector quadrotor package i
 Make sure you set up the Gazebo version in Gazebo8, since starting from this version we are able to provide visual aids inside the simulation environment.
 
 ### UAV Usage
-```
-git clone -b kinetic-cmuswarm https://github.com/yswhynot/hector_quadrotor.git
-```
+
 To set up the controller for this quadrotor, just install any package cmake wants. To make life easier, you could try to install everything here if you don't have them:
 ```
 sudo apt-get install ros-kinetic-ros-control
@@ -22,13 +20,7 @@ sudo apt-get install ros-kinetic-tf2-geometry-msgs
 sudo apt-get install ros-kinetic-joy
 ``` 
 
-Also, the packages that you might need:
-```
-git clone -b catkin https://github.com/tu-darmstadt-ros-pkg/hector_localization
-git clone -b kinetic-devel https://github.com/tu-darmstadt-ros-pkg/hector_gazebo
-git clone -b kinetic-devel https://github.com/tu-darmstadt-ros-pkg/hector_models
-git clone -b catkin https://github.com/tu-darmstadt-ros-pkg/hector_slam
-```
+The drone package source code is all inside the hector_package folder, you should be able to catkin_make and compile.
 
 However, you might run into some other issue if you have `gazebo8`. Just install all packages with `gazebo8` and remove all those with `gazebo7` (I suppose you are using ROS Kinetic).  
 
