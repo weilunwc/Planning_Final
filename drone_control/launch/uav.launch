@@ -18,5 +18,5 @@
     </include>
     
     <!-- activate motors-->
-    <!--<node name="uav_activate" pkg="drone_control" type="uav_enable_motor.py"/>-->
+    <node name="uav_activate" pkg="drone_control" type="enable_motor.py"/>
 </launch>

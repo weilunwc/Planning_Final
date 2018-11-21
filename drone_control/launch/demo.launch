@@ -15,4 +15,9 @@
 <!-- spawn model -->
 <include file="$(find drone_control)/launch/uav.launch"/>
 
+============CONTROLLER==============
+<node name="drone_controller" pkg="drone_control" type="robot_controller.py"/>
+
+
+
 </launch>
