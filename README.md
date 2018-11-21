@@ -28,22 +28,11 @@ If you want to play around the UAV, please refer to [this (though a bit outdated
 
 __UAV Usage__  
 
-I've made things easier in the `scripts` folder with two runnable `run.sh` and `call_srv.sh`.  
+The control code of the UAV is inside the drone_control package, currently is implemented using a simple position P controller (which I think should be enough for this project)
 
-You can just do `./run.sh` in the `scripts` folder to launch everything you need (I think).  
-
-To enable the motor controllers of the UAVs do 
-```
-./call_srv.sh $NUM_ROBOT
-``` 
-where `$NUM_ROBOT` is the number of robots you are currently launching in your config file.  
-
-To control the height of the UAVs, do
-```
-python ./altitude_control.py -$ROBOT_NUM -$MIN_HEIGHT
-```
-Here `MIN_HEIGHT` is the threshold when the z-direction velocity stops publishing, so they might go beyond the height a bit (or a lot depent on the setting of twist).  
-
+The controller subscribes to the "target_position" topic, which is a geometry_msgs/Pose message type. To test its behavior, launch the demo_controller.launch
+Default target position is (0,0,3), you can change it by publishing the topic through command line
+rostopic pub /target_position (keep pressing tab to fill out the rest)
 
 ### Generate Map ###
 
