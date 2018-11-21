@@ -22,6 +22,13 @@ sudo apt-get install ros-kinetic-tf2-geometry-msgs
 sudo apt-get install ros-kinetic-joy
 ``` 
 
+Also, the packages that you might need:
+```
+git clone -b catkin https://github.com/tu-darmstadt-ros-pkg/hector_localization
+git clone -b kinetic-devel https://github.com/tu-darmstadt-ros-pkg/hector_gazebo
+git clone -b kinetic-devel https://github.com/tu-darmstadt-ros-pkg/hector_models
+git clone -b catkin https://github.com/tu-darmstadt-ros-pkg/hector_slam
+```
 
 However, you might run into some other issue if you have `gazebo8`. Just install all packages with `gazebo8` and remove all those with `gazebo7` (I suppose you are using ROS Kinetic).  
 
