@@ -40,3 +40,4 @@ Starting from a 2D map, we will need to use the map server package
 ```
 sudp apt-get install ros-kinetic-map-server
 ```
+
