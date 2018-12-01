@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
 
   // Octotree
-  OcTree* tree = new OcTree("w_map.bt");
+  OcTree* tree = new OcTree("willow_large_octomap.bt");
   OcTreeNode* result;
   point3d query;
 
