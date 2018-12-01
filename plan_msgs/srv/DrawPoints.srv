@@ -1,0 +1,3 @@
+# service message of drawing a graph
+geometry_msgs/Point[] points
+---
