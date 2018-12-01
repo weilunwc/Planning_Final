@@ -17,7 +17,7 @@ class UavRobotControl:
         self.target_pos = Pose()
 
         # Initialize its targe pose to be at height 3
-        self.target_pos.position.z = 3
+        self.target_pos.position.z = 1
         self.received_target_info = False
         
         self.Kpz = 1.5
@@ -49,12 +49,14 @@ class UavRobotControl:
         self.target_pos = target
 
     def drone_pos_cb(self, planner_pub):
+        self.target_pos.position.x = planner_pub.x
+        self.target_pos.position.y = planner_pub.y
         self.target_pos.position.z = planner_pub.z
         # rospy.loginfo("dron/e_pose.z: ", planner_pub.z)
 
-    def test_add_height(self, coeff=0.01):
-        self.target_pos.position.z = min(5.0, target_pos.position.z+coeff)
-        rospy.loginfo("test_add_height: ", self.target_pos.position.z)
+    # def test_add_height(self, coeff=0.01):
+    #     self.target_pos.position.z = min(5.0, target_pos.position.z+coeff)
+    #     rospy.loginfo("test_add_height: ", self.target_pos.position.z)
 
     def run(self):
         rate = rospy.Rate(10)

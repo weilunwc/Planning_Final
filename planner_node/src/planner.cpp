@@ -1,6 +1,11 @@
 #include <octomap/octomap.h>
 #include <octomap/OcTree.h>
 #include <planner_node/planner.h>
+#include <vector>
+#include <algorithm>
+using namespace octomap;
+using namespace std;
+
 namespace planner_node
 {
 using namespace octomap;
@@ -40,7 +45,19 @@ void planner_rrt::publish_pos(float x, float y, float z){
 
 }
 
-
+bool check_result(OcTreeNode* node) {
+	if (node != NULL) {
+		if (node->getOccupancy() > 0.5) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
 
 int main(int argc, char **argv)
 {
@@ -55,15 +72,59 @@ int main(int argc, char **argv)
   
   ros::Rate loop_rate(10);   
 
-  float z_height = 3.0;
+
+  // Octotree
+  OcTree* tree = new OcTree("w_map.bt");
+  OcTreeNode* result;
+  point3d query;
+
+  std::vector<double> x(100, 0), y(100, 0);
+  for (int i = 0; i < 100; i++) {
+  	x[i] = 0.1 * (double)i;
+  	y[i] = 0.1 * (double)i;
+  }
+
+
+  float z_height = 1.0;
+  int counter = 0;
+  bool flag = true;
+  float old_pos_x = 0.0;
+  float old_pos_y = 0.0;
+  float old_pos_z = z_height;
   while (ros::ok())
   {
+  	// counter = min(99, counter);
+  	if(counter > 99) break;
+  	counter++;
 
-	node.publish_pos(0.0, 0.0, z_height);
+    query = point3d(x[counter], y[counter], 1.);
+    result = tree->search(query);
+    bool is_collide = check_result(result);
+    if(is_collide) {
+    	break;
+    	// if(flag){
+    	// 	flag = false;
+    	// 	old_pos_x = (float)x[counter];
+    	// 	old_pos_y = (float)y[counter];
+    	// 	old_pos_z = z_height;
+    		
+    	// }
+    }
+    //check_result(result);
+    cout << (is_collide? "Collision detected" : "Not occupied") << endl;
+    // if(flag){
+		node.publish_pos((float)x[counter], (float)y[counter], z_height);
+    	cout << "counter: " << (float)x[counter] << " " << (float)y[counter] << endl;
+    // }
+  //   else{
+		// node.publish_pos(old_pos_x, old_pos_y, old_pos_z);
+  //   	cout << "counter: " << old_pos_x << " " << old_pos_y << endl;
+
+  //   }
+    // z_height += 0.01;
     ros::spinOnce();
 
     loop_rate.sleep();
-    z_height += 0.01;
     // std::cout << count << std::endl;
   }
   ros::spin();
