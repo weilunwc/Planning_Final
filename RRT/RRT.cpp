@@ -11,34 +11,6 @@
 
 using namespace std;
 
-/*****************************
- * Parameters of the planner *
-******************************/
-
-#define NUMOFDOF 3
-#define GOALSAMPLE 10    //10% 
-#define EPSILON 0.2
-
-/****************************
- * Constants of the planner *
-*****************************/
-#define REACH 1
-#define ADVANCED 2
-#define TRAPPED 3 
-
-/***************************
- * NEW DECLARED FUNCTIONS  *
-****************************/
-
-void random_config(double* map_size);
-int Extend(kdTree* tree ,double* q_rand );
-bool validcheck(double* p1, double* p2);
-bool Check_invalid(double* point);
-double Distance(double*p1, double*p2);
-vector<double*> makeplan(kdTree* tree, double* goal);
-double* Newpoint(double* q_near, double* q_rand);
-
-
 
 RRT::RRT(double* map,int xSize,int ySize,int zSize,double* start,double* goal)
 {
@@ -49,6 +21,8 @@ RRT::RRT(double* map,int xSize,int ySize,int zSize,double* start,double* goal)
 	start_ = start;
 	goal_ = goal;
 }
+
+
 void RRT::planner()
 {	
 	bool foundpath = false;
@@ -62,21 +36,9 @@ void RRT::planner()
 	
 	boundingBox* bBox = new boundingBox(cSpace);
 
-	
-	
-/***********************************************************
- * 1. T.init                                               *
- *                                                         *
- * 2. For every step                                       * 
- *    2-1. make a random point                             *
- *    2-2. EXTEND between tree and a random point          *
- *                                                         *
- * 3. In EXTEND function                                   *
- *                                                         *
- ***********************************************************/
 	srand(time(NULL));
 
-	//T.init
+	// 1.T.init
 	kdTree* tree = new kdTree(NUMOFDOF,bBox);
 	tree->root = tree->insert(start,tree->root,0);
 
@@ -93,10 +55,9 @@ void RRT::planner()
 		extend_success = Extend(tree,q_rand);
 
 		if(extend_success != TRAPPED) count_tree++; //check whether this is necessary when make the plan
-		
-		if(step % GOALSAMPLE == 0)
+		tree->NN(goal, tree->root, 0, tree->BB->bounds);
+		if((step % GOALSAMPLE == 0) && (Distance(goal,tree->bestPoint) <= 3)
 		{
-			q_rand = goal;
 			result = validcheck(tree->bestPoint , goal);
 	
 			if(result)
@@ -130,13 +91,8 @@ void RRT::nearestNeighbor(double* sample)
 
 }
 
-void RRT::extend(double* sample)
-{
 
-}
-
-
-void random_config(double* q_rand,double* map_size)
+void RRT::random_config(double* q_rand,double* map_size)
 {
 	
 	for(int i = 0; i < NUMOFDOF; i++)
@@ -147,7 +103,7 @@ void random_config(double* q_rand,double* map_size)
 	return;	
 }
 
-int Extend(kdTree* tree ,double* q_rand )
+int RRT::Extend(kdTree* tree ,double* q_rand )
 {
 	bool config_result = 0;
 	double distance = 0;
@@ -170,7 +126,7 @@ int Extend(kdTree* tree ,double* q_rand )
 	}
 
          
-	config_result = (map.check(q_new) && validcheck(q_new, tree->bestPoint));
+	config_result = (validcheck(q_new, tree->bestPoint));
 	
 	 
         // config_result -> 1: Valid , 0: Invalid
@@ -180,9 +136,7 @@ int Extend(kdTree* tree ,double* q_rand )
 
 		tree->NN(q_new,tree->root,0,tree->BB->bounds);
 		point = tree->insert(q_new, tree->root,0);
-		//save the parent 
-		point->parent = q_near;
-
+		
 		if(q_new == q_rand) return REACH;
 		
 		else return ADVANCED;
@@ -191,7 +145,7 @@ int Extend(kdTree* tree ,double* q_rand )
 }
 
 
-double* Newpoint(double* q_near, double* q_rand)
+double* RRT::Newpoint(double* q_near, double* q_rand)
 {
 	double dir[NUMOFDOF];
 	double q_new[NUMOFDOF];
@@ -207,7 +161,7 @@ double* Newpoint(double* q_near, double* q_rand)
 
 
 
-bool validcheck(double* p1, double* p2)
+bool RRT::validcheck(double* p1, double* p2)
 {
 	bool result = 0;
 	double num_interpol = 0;
@@ -217,7 +171,7 @@ bool validcheck(double* p1, double* p2)
 	double rate2 = 0;
 	
 	distance = Distance(p1,p2);
-	num_interpol = (int)distance/EPSILON;	
+	num_interpol = (int)distance/CHECKLEN;
 
 	for(int i = 0; i < num_interpol; i++)
 	{
@@ -240,7 +194,7 @@ bool validcheck(double* p1, double* p2)
 	
 }
 
-bool Check_invalid(double* point)
+bool RRT::Check_invalid(double* point)
 {
 	return map.check(point);
 }
