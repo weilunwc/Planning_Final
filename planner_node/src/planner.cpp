@@ -59,6 +59,24 @@ bool check_result(OcTreeNode* node) {
 	}
 }
 
+// Check with ray_casting
+bool is_box_collided(octomap::OcTree* tree, std::vector<float> x, std::vector<float> y, std::vector<float> z, octomap::point3d center, float x_sam, float y_sam, float z_sam) {
+        octomap::point3d d(x_sam - center.x(), y_sam - center.y(), z_sam - center.z()); // direction
+        
+        octomap::point3d end;
+        std::cout << "d = "<< d << std::endl; 
+    for (int i = 0; i < x.size(); i++) {
+        octomap::point3d oi(center.x()+x[i], center.y()+y[i], center.z()+z[i]);
+        
+        std::cout << "origin" << i << "= "<< oi << std::endl; 
+        bool is_occupied = tree->castRay(oi,d,end,false,-1);
+        std::cout << (is_occupied ? "The ray hit something" : "Nothing hit...") << std::endl;
+        std::cout << end << std::endl; 
+    }
+
+    return false;
+}
+
 int main(int argc, char **argv)
 {
   // Set up ROS.
@@ -91,6 +109,20 @@ int main(int argc, char **argv)
   float old_pos_x = 0.0;
   float old_pos_y = 0.0;
   float old_pos_z = z_height;
+
+
+  // define vertices of the bounding box
+  float h_x = 0.4, h_y = 0.4, h_z = 0.1;
+  std::vector<float> x_v = {h_x, -h_x, h_x, -h_x, h_x, -h_x, h_x, -h_x};
+  std::vector<float> y_v = {h_y, h_y, -h_y, -h_y, h_y, h_y, -h_y, -h_y};
+  std::vector<float> z_v = {h_z, h_z, h_z, h_z, -h_z, -h_z, -h_z, -h_z};
+
+  float x_sam = 1., y_sam = 0., z_sam = 1.;
+  // Test the raycasting function
+  octomap::point3d center(0., 0., 1.); 
+  is_box_collided(tree, x_v, y_v, z_v, center, x_sam, y_sam, z_sam);
+
+
   while (ros::ok())
   {
   	// counter = min(99, counter);
