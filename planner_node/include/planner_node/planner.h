@@ -22,7 +22,6 @@ class planner_rrt
   bool enable_;
   ros::Publisher pub_;
   ros::NodeHandle nh_;
-  
 
 };
 }

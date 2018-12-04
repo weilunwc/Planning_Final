@@ -8,27 +8,12 @@
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>
-// #include <fcl/fcl.h>
-// #include "fcl/shape/geometric_shapes.h"
-// #include "fcl/narrowphase/narrowphase.h"
-// #include <fcl/collision.h>
-// #include "fcl/ccd/motion.h"
-// #include <fcl/geometry/octree/octree.h>
-// #include "fcl/traversal/traversal_node_octree.h"
-// #include "fcl/broadphase/broadphase.h"
-// #include "fcl/shape/geometric_shape_to_BVH_model.h"
-// #include "fcl/math/transform.h"
-// #include "fcl/BV/AABB.h"
-// #include "fcl/collision_object.h"
 
-// using namespace octomap;
-// using namespace std;
-// using namespace fcl;
 namespace planner_node
 {
-// using namespace octomap;
-// using namespace std;
 
+namespace planner_node
+{
 
 planner_rrt::planner_rrt(ros::NodeHandle nh): enable_(true)
 {
@@ -66,6 +51,7 @@ void planner_rrt::publish_pos(float x, float y, float z){
 }
 
 bool check_result(octomap::OcTreeNode* node) {
+
 	if (node != NULL) {
 		if (node->getOccupancy() > 0.5) {
 			return true;
@@ -79,6 +65,7 @@ bool check_result(octomap::OcTreeNode* node) {
 	}
 }
 
+
 bool rayCast_collision(octomap::point3d origin, octomap::point3d des_pos, octomap::OcTree* tree){
 	double dr = 0.9; // drone radius
   	octomap::point3d ray_end;
@@ -91,7 +78,24 @@ bool rayCast_collision(octomap::point3d origin, octomap::point3d des_pos, octoma
 	// std::cout << dir << -dir << dir_normed << extend_vec
 	//  << des_pos << new_des_pos << ray_end  << " "
 	//  << origin.distance(new_des_pos) << " " << origin.distance(ray_end) << std::endl;
-	return success ? origin.distance(new_des_pos) >= origin.distance(ray_end) : false; 
+	return success ? origin.distance(new_des_pos) >= origin.distance(ray_end) : false;
+}
+// Check with ray_casting
+bool is_box_collided(octomap::OcTree* tree, std::vector<float> x, std::vector<float> y, std::vector<float> z, octomap::point3d center, float x_sam, float y_sam, float z_sam) {
+        octomap::point3d d(x_sam - center.x(), y_sam - center.y(), z_sam - center.z()); // direction
+
+        octomap::point3d end;
+        std::cout << "d = "<< d << std::endl;
+    for (int i = 0; i < x.size(); i++) {
+        octomap::point3d oi(center.x()+x[i], center.y()+y[i], center.z()+z[i]);
+
+        std::cout << "origin" << i << "= "<< oi << std::endl;
+        bool is_occupied = tree->castRay(oi,d,end,false,-1);
+        std::cout << (is_occupied ? "The ray hit something" : "Nothing hit...") << std::endl;
+        std::cout << end << std::endl;
+    }
+
+    return false;
 }
 
 int main(int argc, char **argv)
@@ -104,16 +108,15 @@ int main(int argc, char **argv)
   planner_node::planner_rrt node(nh);
 
   // Let ROS handle all callbacks.
-  
-  ros::Rate loop_rate(10);   
+
+  ros::Rate loop_rate(10);
 
 
   // Octotree
+
   octomap::OcTree* tree = new octomap::OcTree("willow_large_octomap.bt");
   octomap::OcTreeNode* result;
   octomap::point3d query;
-
-  // OcTree* fcl_tree = new OcTree(tree);
 
   std::vector<double> x(100, 0), y(100, 0);
   for (int i = 0; i < 100; i++) {
@@ -129,19 +132,30 @@ int main(int argc, char **argv)
   float old_pos_y = 0.0;
   float old_pos_z = z_height;
   bool is_collide;
-  
+
+
+  // define vertices of the bounding box
+  float h_x = 0.4, h_y = 0.4, h_z = 0.1;
+  std::vector<float> x_v = {h_x, -h_x, h_x, -h_x, h_x, -h_x, h_x, -h_x};
+  std::vector<float> y_v = {h_y, h_y, -h_y, -h_y, h_y, h_y, -h_y, -h_y};
+  std::vector<float> z_v = {h_z, h_z, h_z, h_z, -h_z, -h_z, -h_z, -h_z};
+
+  float x_sam = 1., y_sam = 0., z_sam = 1.;
+  // Test the raycasting function
+  octomap::point3d center(0., 0., 1.);
+  is_collide = is_box_collided(tree, x_v, y_v, z_v, center, x_sam, y_sam, z_sam);
+
   while (ros::ok())
   {
   	// counter = min(99, counter);
   	if(counter > 99) break;
   	counter++;
-
     octomap::point3d origin(0.0, 0.0, z_height);
   	octomap::point3d target_pos(x[counter], y[counter], z_height);
   	is_collide = rayCast_collision(origin, target_pos, tree);
 
     std::cout << (is_collide? "Collision detected" : "Not occupied") << std::endl;
-	node.publish_pos((float)x[counter], (float)y[counter], z_height);
+		node.publish_pos((float)x[counter], (float)y[counter], z_height);
     std::cout << "counter: " << (float)x[counter] << " " << (float)y[counter] << std::endl;
     if(is_collide){
     	break;
@@ -149,6 +163,10 @@ int main(int argc, char **argv)
     ros::spinOnce();
 
     loop_rate.sleep();
+
+    // query = point3d(x[counter], y[counter], 1.);
+    // result = tree->search(query);
+    // bool is_collide = check_result(result);
 
   }
   ros::spin();

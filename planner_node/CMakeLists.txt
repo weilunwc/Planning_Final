@@ -9,6 +9,9 @@ NAMES fcl/collision.h
 HINTS ${PC_FCL_INCLUDEDIR}
 PATHS "${CMAKE_INSTALL_PREFIX}/include")
 
+add_compile()
+find_package(catkin REQUIRED COMPONENTS dynamic_reconfigure message_generation roscpp rosgraph_msgs rospy std_msgs)
+
 add_message_files(
   FILES
   planner_pub.msg
@@ -47,10 +50,7 @@ target_link_libraries(planner ${Boost_LIBRARIES})
 
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
-#include_directories ( "$ENV{EIGEN3_INCLUDE_DIR}" )
-#INCLUDE_DIRECTORIES ( /usr/include/eigen3 )
-#find_package (Eigen3 REQUIRED NO_MODULE)
-#target_link_libraries (planner Eigen3::Eigen)
+
 
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}

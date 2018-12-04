@@ -1,5 +1,9 @@
 <launch>
 
+======SETUP TARGETS AND DEPOTS======
+<node name="setup_environment" pkg="drone_control" type="setup_environment.py"/>
+
+
 
 ======SIMULATION INITIALIZATION======
 
@@ -18,6 +22,8 @@
 ============CONTROLLER==============
 <node name="drone_controller" pkg="drone_control" type="robot_controller.py"/>
 
+============VISUALIZATION===========
+<node name="gazebo_drawing" pkg="plan_visual" type="gazebo_drawing"/>
 
 
 </launch>
