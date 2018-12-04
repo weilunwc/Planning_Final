@@ -82,12 +82,16 @@ bool check_result(octomap::OcTreeNode* node) {
 bool rayCast_collision(octomap::point3d origin, octomap::point3d des_pos, octomap::OcTree* tree){
 	double dr = 0.9; // drone radius
   	octomap::point3d ray_end;
-  	octomap::point3d dir = des_pos - origin;
-  	octomap::point3d dir_normed = dir.normalize();
+  	octomap::point3d dir = origin - des_pos;
+  	octomap::point3d dir_normed = dir;
+  	dir_normed.normalize();
   	octomap::point3d extend_vec = octomap::point3d(dir_normed.x()*dr, dir_normed.y()*dr, dir_normed.z()*dr);
-	octomap::point3d collision_point = origin + extend_vec;
-	tree->castRay(collision_point, direction, ray_end);
-	return collision_point.distance(des_pos) >= collision_point.distance(ray_end); 
+	octomap::point3d new_des_pos = des_pos - extend_vec;
+	bool success = tree->castRay(origin, -dir, ray_end);
+	// std::cout << dir << -dir << dir_normed << extend_vec
+	//  << des_pos << new_des_pos << ray_end  << " "
+	//  << origin.distance(new_des_pos) << " " << origin.distance(ray_end) << std::endl;
+	return success ? origin.distance(new_des_pos) >= origin.distance(ray_end) : false; 
 }
 
 int main(int argc, char **argv)
