@@ -3,13 +3,33 @@
 #include <planner_node/planner.h>
 #include <vector>
 #include <algorithm>
-using namespace octomap;
-using namespace std;
+#include <Eigen/Eigen>
+#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/array.hpp>
+// #include <fcl/fcl.h>
+// #include "fcl/shape/geometric_shapes.h"
+// #include "fcl/narrowphase/narrowphase.h"
+// #include <fcl/collision.h>
+// #include "fcl/ccd/motion.h"
+// #include <fcl/geometry/octree/octree.h>
+// #include "fcl/traversal/traversal_node_octree.h"
+// #include "fcl/broadphase/broadphase.h"
+// #include "fcl/shape/geometric_shape_to_BVH_model.h"
+// #include "fcl/math/transform.h"
+// #include "fcl/BV/AABB.h"
+// #include "fcl/collision_object.h"
 
+// using namespace octomap;
+// using namespace std;
+// using namespace fcl;
 namespace planner_node
 {
-using namespace octomap;
-using namespace std;
+// using namespace octomap;
+// using namespace std;
+
+
 planner_rrt::planner_rrt(ros::NodeHandle nh): enable_(true)
 {
 	ROS_INFO("starting node");
@@ -45,7 +65,7 @@ void planner_rrt::publish_pos(float x, float y, float z){
 
 }
 
-bool check_result(OcTreeNode* node) {
+bool check_result(octomap::OcTreeNode* node) {
 	if (node != NULL) {
 		if (node->getOccupancy() > 0.5) {
 			return true;
@@ -57,6 +77,17 @@ bool check_result(OcTreeNode* node) {
 	else {
 		return false;
 	}
+}
+
+bool rayCast_collision(octomap::point3d origin, octomap::point3d des_pos, octomap::OcTree* tree){
+	double dr = 0.9; // drone radius
+  	octomap::point3d ray_end;
+  	octomap::point3d dir = des_pos - origin;
+  	octomap::point3d dir_normed = dir.normalize();
+  	octomap::point3d extend_vec = octomap::point3d(dir_normed.x()*dr, dir_normed.y()*dr, dir_normed.z()*dr);
+	octomap::point3d collision_point = origin + extend_vec;
+	tree->castRay(collision_point, direction, ray_end);
+	return collision_point.distance(des_pos) >= collision_point.distance(ray_end); 
 }
 
 int main(int argc, char **argv)
@@ -74,9 +105,11 @@ int main(int argc, char **argv)
 
 
   // Octotree
-  OcTree* tree = new OcTree("willow_large_octomap.bt");
-  OcTreeNode* result;
-  point3d query;
+  octomap::OcTree* tree = new octomap::OcTree("willow_large_octomap.bt");
+  octomap::OcTreeNode* result;
+  octomap::point3d query;
+
+  // OcTree* fcl_tree = new OcTree(tree);
 
   std::vector<double> x(100, 0), y(100, 0);
   for (int i = 0; i < 100; i++) {
@@ -91,41 +124,28 @@ int main(int argc, char **argv)
   float old_pos_x = 0.0;
   float old_pos_y = 0.0;
   float old_pos_z = z_height;
+  bool is_collide;
+  
   while (ros::ok())
   {
   	// counter = min(99, counter);
   	if(counter > 99) break;
   	counter++;
 
-    query = point3d(x[counter], y[counter], 1.);
-    result = tree->search(query);
-    bool is_collide = check_result(result);
-    if(is_collide) {
-    	break;
-    	// if(flag){
-    	// 	flag = false;
-    	// 	old_pos_x = (float)x[counter];
-    	// 	old_pos_y = (float)y[counter];
-    	// 	old_pos_z = z_height;
-    		
-    	// }
-    }
-    //check_result(result);
-    cout << (is_collide? "Collision detected" : "Not occupied") << endl;
-    // if(flag){
-		node.publish_pos((float)x[counter], (float)y[counter], z_height);
-    	cout << "counter: " << (float)x[counter] << " " << (float)y[counter] << endl;
-    // }
-  //   else{
-		// node.publish_pos(old_pos_x, old_pos_y, old_pos_z);
-  //   	cout << "counter: " << old_pos_x << " " << old_pos_y << endl;
+    octomap::point3d origin(0.0, 0.0, z_height);
+  	octomap::point3d target_pos(x[counter], y[counter], z_height);
+  	is_collide = rayCast_collision(origin, target_pos, tree);
 
-  //   }
-    // z_height += 0.01;
+    std::cout << (is_collide? "Collision detected" : "Not occupied") << std::endl;
+	node.publish_pos((float)x[counter], (float)y[counter], z_height);
+    std::cout << "counter: " << (float)x[counter] << " " << (float)y[counter] << std::endl;
+    if(is_collide){
+    	break;
+    }
     ros::spinOnce();
 
     loop_rate.sleep();
-    // std::cout << count << std::endl;
+
   }
   ros::spin();
 
