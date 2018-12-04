@@ -41,3 +41,24 @@ Starting from a 2D map, we will need to use the map server package
 sudp apt-get install ros-kinetic-map-server
 ```
 
+### Collision Detection Functions ###
+Collision detection funtion `bool check_result(octomap::OcTreeNode* node)` is used to include whether a point is an obstacle or not. For example if we want to check whether a point (x, y, z) is an obstacle or not:
+```
+octomap::OcTree* tree = new octomap::OcTree("willow_large_octomap.bt");
+octomap::OcTreeNode* result;
+octomap::point3d query(x, y, z);  // create a point
+result = tree->search(query);
+bool is_collide = check_result(result);
+```
+If `is_collide = true`, it means point (x, y, z) is an obstacle.
+
+Another collision detection function `bool rayCast_collision(octomap::point3d origin, octomap::point3d des_pos, octomap::OcTree* tree)` is used to check wether there are any obstacles between the query point and the starting point (The starting point could be the position of the drone). Here are the example for using them.
+```
+octomap::OcTree* tree = new octomap::OcTree("willow_large_octomap.bt");
+octomap::OcTreeNode* result;
+octomap::point3d query(x, y, z);  // create a point
+octomap::point3d staring_point(0.0, 0.0, z_height);  // might be the position of drone or any starting point
+bool is_collide = rayCast_collision(staring_point, query, tree);
+
+```
+If `is_collide = true`, it means there is at least one obstacles between `query` and `staring_point`.
