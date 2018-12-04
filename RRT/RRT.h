@@ -51,14 +51,14 @@ class RRT
          * NEW DECLARED FUNCTIONS  *
          ****************************/
     
-        void random_config(double* map_size);
-        int Extend(kdTree* tree ,double* q_rand );
-        bool validcheck(double* p1, double* p2);
+        void random_config(double* q_rand, double* map_size);
+        int Extend(kdTree* tree ,double* q_rand, double*map, int x_size, int y_size );
+        bool validcheck(double* p1, double* p2,double*map, int x_size, int y_size );
         bool Check_invalid(double* point);
         double Distance(double*p1, double*p2);
-        vector<double*> makeplan(kdTree* tree, double* goal);
-        double* Newpoint(double* q_near, double* q_rand);
-
+        std::vector<double*> makeplan(kdTree* tree, double* goal);
+        void Newpoint(double* q_new,double* q_near, double* q_rand);
+        static void planner();
 		//Collision Checking
 		bool validNewConf(double* point);
 
