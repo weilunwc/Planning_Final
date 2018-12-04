@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(planner_node)
-
+add_compile()
 find_package(catkin REQUIRED COMPONENTS dynamic_reconfigure message_generation roscpp rosgraph_msgs rospy std_msgs)
 
 
