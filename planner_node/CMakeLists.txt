@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(planner_node)
+<<<<<<< HEAD
+add_compile_options(-std=c++11)
+=======
 set (CMAKE_CXX_STANDARD 11)
 #add_compile()
+>>>>>>> 108298e69c490f8cd9cf2f8a63fb6669a5c23506
 find_package(catkin REQUIRED COMPONENTS dynamic_reconfigure message_generation roscpp rosgraph_msgs rospy std_msgs)
 
 
@@ -22,7 +26,7 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(planner src/planner.cpp)
+add_executable(planner src/planner.cpp src/kdTree.cpp src/RRT.cpp)
 target_link_libraries(planner ${catkin_LIBRARIES})
 add_dependencies(planner planner_node_generate_messages_cpp)
 
@@ -30,6 +34,9 @@ find_package(octomap REQUIRED)
 include_directories(${OCTOMAP_INCLUDE_DIRS})
 target_link_libraries(planner ${OCTOMAP_LIBRARIES})
 #find_package(octomap_ros REQUIRED)
+
+#add_library(rrtLib src/kdTree.cpp src/RRT.cpp)
+#target_link_libraries(rrtLib ${OCTOMAP_LIBRARIES} ${catkin_LIBRARIES})
 
 
 install(DIRECTORY include/${PROJECT_NAME}/

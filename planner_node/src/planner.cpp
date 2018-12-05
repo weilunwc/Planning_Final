@@ -3,14 +3,18 @@
 #include <planner_node/planner.h>
 #include <vector>
 #include <algorithm>
+<<<<<<< HEAD
+#include "RRT.h"
+
+=======
 #include <std_msgs/Bool.h>
+>>>>>>> 108298e69c490f8cd9cf2f8a63fb6669a5c23506
 using namespace octomap;
 using namespace std;
 
 namespace planner_node
 {
-using namespace octomap;
-using namespace std;
+
 planner_rrt::planner_rrt(ros::NodeHandle nh): enable_(true)
 {
 	ROS_INFO("starting node");
@@ -116,6 +120,16 @@ bool is_box_collided(octomap::OcTree* tree, std::vector<float> x, std::vector<fl
         octomap::point3d d(x_sam - center.x(), y_sam - center.y(), z_sam - center.z()); // direction
 
         octomap::point3d end;
+<<<<<<< HEAD
+        // std::cout << "d = "<< d << std::endl; 
+    for (int i = 0; i < x.size(); i++) {
+        octomap::point3d oi(center.x()+x[i], center.y()+y[i], center.z()+z[i]);
+        
+        // std::cout << "origin" << i << "= "<< oi << std::endl; 
+        bool is_occupied = tree->castRay(oi,d,end,false,-1);
+        // std::cout << (is_occupied ? "The ray hit something" : "Nothing hit...") << std::endl;
+        // std::cout << end << std::endl; 
+=======
         std::cout << "d = "<< d << std::endl;
     for (int i = 0; i < x.size(); i++) {
         octomap::point3d oi(center.x()+x[i], center.y()+y[i], center.z()+z[i]);
@@ -124,6 +138,7 @@ bool is_box_collided(octomap::OcTree* tree, std::vector<float> x, std::vector<fl
         bool is_occupied = tree->castRay(oi,d,end,false,-1);
         std::cout << (is_occupied ? "The ray hit something" : "Nothing hit...") << std::endl;
         std::cout << end << std::endl;
+>>>>>>> 108298e69c490f8cd9cf2f8a63fb6669a5c23506
     }
 
     return false;
@@ -138,15 +153,38 @@ int main(int argc, char **argv)
   // Create a new node_example::Talker object.
   planner_node::planner_rrt node(nh);
 
+  // Octotree
+  OcTree* tree = new OcTree("willow_large_octomap.bt");
+
+  double xSize = 10;
+  double ySize = 10;
+  double zSize = 3;
+  // double start[3] = {0,0,1.0};
+  // double goal[3] = {4.2,3.5,1.0};
+  // double *start =  new double[3];
+  // double *goal = new double[3];
+  // start[0] = 0;
+  // start[1] = 0;
+  // start[2] = 1.0;
+  // goal[0] = 4.2;
+  // goal[1] = 3.5;
+  // goal[2] = 1.0;
+
+  vector<double> start;
+  vector<double> goal;
+  start.push_back(0);
+  start.push_back(0);
+  start.push_back(1.0);
+  goal.push_back(4.2);
+  goal.push_back(3.5);
+  goal.push_back(1.0);
+
+
+  RRT rrtNode(xSize,ySize,zSize,start,goal,tree);
+
   // Let ROS handle all callbacks.
 
   ros::Rate loop_rate(10);
-
-
-  // Octotree
-  OcTree* tree = new OcTree("willow_large_octomap.bt");
-  OcTreeNode* result;
-  point3d query;
 
   std::vector<double> x(100, 0), y(100, 0);
   for (int i = 0; i < 100; i++) {
@@ -174,6 +212,47 @@ bool is_collide = false;
 // std::vector<float> y_v = {h_y, h_y, -h_y, -h_y, h_y, h_y, -h_y, -h_y};
 // std::vector<float> z_v = {h_z, h_z, h_z, h_z, -h_z, -h_z, -h_z, -h_z};
 
+<<<<<<< HEAD
+  rrtNode.planner();
+
+  // while (ros::ok())
+  // {
+  	// if(counter > 99) break;
+  	// counter++;
+
+    // validNewConf(point,tree);
+    // query = point3d(x[counter], y[counter], 1.);
+    // result = tree->search(query);
+    // bool is_collide = check_result(result);
+    // if(is_collide) {
+    // 	break;
+    // 	// if(flag){
+    // 	// 	flag = false;
+    // 	// 	old_pos_x = (float)x[counter];
+    // 	// 	old_pos_y = (float)y[counter];
+    // 	// 	old_pos_z = z_height;
+    		
+    // 	// }
+    // }
+    //check_result(result);
+    // cout << (is_collide? "Collision detected" : "Not occupied") << endl;
+    // if(flag){
+		// node.publish_pos((float)x[counter], (float)y[counter], z_height);
+    // 	cout << "counter: " << (float)x[counter] << " " << (float)y[counter] << endl;
+    // }
+  //   else{
+		// node.publish_pos(old_pos_x, old_pos_y, old_pos_z);
+  //   	cout << "counter: " << old_pos_x << " " << old_pos_y << endl;
+
+  //   }
+    // z_height += 0.01;
+  //   ros::spinOnce();
+
+  //   loop_rate.sleep();
+  //   // std::cout << count << std::endl;
+  // }
+  ros::spin();
+=======
 // float x_sam = 1., y_sam = 0., z_sam = 1.;
 // // Test the raycasting function
 // octomap::point3d center(0., 0., 1.);
@@ -218,6 +297,7 @@ while (ros::ok())
 
 }
 ros::spin();
+>>>>>>> 108298e69c490f8cd9cf2f8a63fb6669a5c23506
 
 
 return 0;
