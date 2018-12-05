@@ -46,7 +46,7 @@ RRT::~RRT()
 	//Might want to do something here later if we allocate on heap
 }
 
-bool RRT::validNewConf(vector<double>  q_rand,vector<double>  q_near,vector<double>  q_new)
+bool RRT::validNewConf(vector<double>  q_rand,vector<double>  q_near,vector<double>  &q_new)
 {
   octomap::OcTreeNode* result;
   octomap::point3d query;
@@ -70,15 +70,15 @@ bool RRT::validNewConf(vector<double>  q_rand,vector<double>  q_near,vector<doub
 	query = octomap::point3d(q_new[0], q_new[1], q_new[2]);
 	result = octoTree->search(query);
 
-	tree_->NN(q_new,tree_->root,0,tree_->BB->bounds);	
+	// tree_->NN(q_new,tree_->root,0,tree_->BB->bounds);	
 	cout << "treesize: " << tree_->size << endl;
-	// std::cout << "new: " << q_new[0] << " " << q_new[1] << " " << q_new[2] << std::endl;
 
   if(!check_result(result))
   {
+	std::cout << "new: " << q_new[0] << " " << q_new[1] << " " << q_new[2] << std::endl;
 	tree_->insert(q_new,tree_->root,0);
   } 
-  return check_result(result);
+  return !check_result(result);
 }
 
 vector<double>  RRT::random_config()
@@ -91,7 +91,7 @@ vector<double>  RRT::random_config()
 }
 
 
-void RRT::planner()			
+void RRT::plan()			
 {	
 	for(int i=0;i<NUMVTX;i++)
 	{
@@ -110,6 +110,7 @@ void RRT::planner()
 		if(status == REACHED && q_rand == goal_)
 		{
 			cout << " FUCKKK YEEEAAA!!! " <<endl;
+			exportPlan();
 			break;
 		}
 	}
@@ -125,7 +126,7 @@ int RRT::Extend(vector<double> q_rand )
 	// std::cout << "rand: " << q_rand[0] << " " << q_rand[1] << " " << q_rand[2] << std::endl;
 	tree_->bestDist = INF;
 	tree_->NN(q_rand, tree_->root, 0,tree_->BB->bounds);
-	// std::cout << "bestPoint: " << tree_->bestPoint[0] << " " << tree_->bestPoint[1] << " " << tree_->bestPoint[2] << std::endl;
+	std::cout << "bestPoint: " << tree_->bestPoint[0] << " " << tree_->bestPoint[1] << " " << tree_->bestPoint[2] << std::endl;
 
 	q_near[0] = tree_->bestPoint[0];
 	q_near[1] = tree_->bestPoint[1];
@@ -197,19 +198,19 @@ bool RRT::check_result(octomap::OcTreeNode* node) {
 }
 
 
-// vector<double*> makeplan(kdTree* tree, double* goal)
-// {
-// 	vector<double*> vector_plan;
-// 	tree->NN(goal,tree->root,0,tree->BB->bounds);
-// 	Node* tmp = tree->nearestNode;
+std::vector<std::vector<double> > RRT::exportPlan()
+{
+	vector< vector<double> > vector_plan;
+	tree_->NN(goal_,tree_->root,0,tree_->BB->bounds);
+	Node* tmp = tree_->nearestNode;
     
-//     vector_plan.push_back(goal);
+    vector_plan.push_back(goal_);
 	
-// 	while(tmp != NULL)
-// 	{
-// 		plan.push_back(tmp->data);
-// 		tmp = tmp->parent;
-// 	}
+	while(tmp != NULL)
+	{
+		vector_plan.push_back(tmp->data);
+		tmp = tmp->parent;
+	}
 	
-// 	return vector_plan;
-// }
+	return vector_plan;
+}

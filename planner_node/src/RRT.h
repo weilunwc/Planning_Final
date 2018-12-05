@@ -46,11 +46,11 @@ class RRT
 	public:
 		RRT(int xSize,int ySize,int zSize,std::vector<double>  start,std::vector<double>  goal,octomap::OcTree* octo);
 		~RRT();
-		void planner();
+		void plan();
         int Extend(std::vector<double> q_rand);
 
 		//Collision Checking
-		bool validNewConf(std::vector<double>  q,std::vector<double>  q_near,std::vector<double>  q_new);
+		bool validNewConf(std::vector<double>  q,std::vector<double>  q_near,std::vector<double>  &q_new);
 		bool comparePt(std::vector<double>  p1,std::vector<double>  p2,int dim);
 		bool check_result(octomap::OcTreeNode* node);
 
@@ -60,7 +60,7 @@ class RRT
 		std::vector<double>  random_config();
 
         double Distance(std::vector<double> p1, std::vector<double> p2);
-        // std::vector<std::vector<double> > makeplan(kdTree* tree, std::vector<double> goal);
+        std::vector<std::vector<double> > exportPlan();
 
 	private:
 		octomap::OcTree* octoTree;
