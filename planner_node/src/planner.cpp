@@ -202,13 +202,14 @@ while (ros::ok())
     break;
   }
 
-  node.subscribe_reached();
-  bool is_reached = node.get_reach();
-  std::cout << "is_reached:   " << is_reached << std::endl;
+  node.publish_pos((float)x[counter], (float)y[counter], z_height);
   ros::spinOnce();
 
   loop_rate.sleep();
-  node.publish_pos((float)x[counter], (float)y[counter], z_height);
+  node.subscribe_reached();
+  bool is_reached = node.get_reach();
+  std::cout << "is_reached:   " << is_reached << std::endl;
+  
   loop_rate.sleep();
 
 	// query = point3d(x[counter], y[counter], 1.);
