@@ -55,6 +55,19 @@ Node* kdTree::insert(vector<double> point,Node* n,int cd)
 	return n;
 }
 
+void kdTree::kNN(std::vector<double> point, Node* n, int cd, std::vector<double> nodeBound,double r)
+{
+	vector< Node* > kNearestNodes;
+	vector< vector<double> > kNearest;
+	while(kNearestNodes.size()<k)
+	{
+		NN(point,root,0,BB->bounds);
+		kNearestNodes.push_back(nearestNode);
+		nearestNode->alreadyFound = true;
+	}
+
+}
+
 void  kdTree::NN(vector<double>point, Node* n, int cd, vector<double>nodeBound)
 {
 	double dist;
@@ -190,20 +203,6 @@ bool kdTree::comparePt(vector<double>p1,vector<double>p2,int dim)
 			count++;
 		}
 	}
-	// cout << "P1: ";
-	// for(int i=0;i<dim;i++)
-	// {
-	// 	cout << p1[i] << " ";
-	// }
-	// cout << endl;
-
-	// cout << "P2: ";
-	// for(int i=0;i<dim;i++)
-	// {
-	// 	cout << p2[i] << " ";
-	// }
-	// cout << endl;
-
 	if(count == dim)
 	{
 		return true;

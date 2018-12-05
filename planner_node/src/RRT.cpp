@@ -2,7 +2,7 @@
 	RRT.cpp
 	
 	by Peter Jan
-	Nov. 20 2018
+	Nov. 20 2018 	
 */
 
 #include "RRT.h"
@@ -84,9 +84,9 @@ bool RRT::validNewConf(vector<double>  q_rand,vector<double>  q_near,vector<doub
 vector<double>  RRT::random_config()
 {
 	vector<double> retVec;
-	retVec.push_back(genRand(0,xSize_));
-	retVec.push_back(genRand(0,ySize_));
-	retVec.push_back( genRand(0,zSize_));
+	retVec.push_back(genRand(-30,30));
+	retVec.push_back(genRand(-30,30));
+	retVec.push_back( genRand(0,3));
 	return retVec;
 }
 
@@ -134,7 +134,8 @@ int RRT::Extend(vector<double> q_rand )
 
 	if(validNewConf(q_rand,q_near,q_new))
     {
-		if(comparePt(q_rand,q_new,3)) 
+    	//comparePt(q_rand,q_new,3)
+		if(q_rand == q_new) 
 		{
 			return REACHED;
 		}

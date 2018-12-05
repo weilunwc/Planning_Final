@@ -171,9 +171,9 @@ int main(int argc, char **argv)
   start.push_back(0);
   start.push_back(0);
   start.push_back(1.0);
-  goal.push_back(1);
-  goal.push_back(1);
-  goal.push_back(1.0);
+  goal.push_back(-9.5);
+  goal.push_back(-6.5);
+  goal.push_back(0.5);
 
 
   RRT rrtNode(xSize,ySize,zSize,start,goal,tree);
@@ -213,6 +213,11 @@ int main(int argc, char **argv)
   {
     rrtNode.plan();
     vector< vector<double> > plan = rrtNode.exportPlan();
+
+    for(auto p:plan)
+    {
+      cout << "x: " << p[0] << " y: " << p[1] << " z: " << p[2] <<endl;
+    }
   	// if(counter > 99) break;
   	// counter++;
 
