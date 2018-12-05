@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist, Pose, Point
 from gazebo_msgs.msg import ModelState
 from gazebo_msgs.msg import ModelStates
 from planner_node.msg import planner_pub 
-
+from std_msgs.msg import Bool
 class UavRobotControl:
     def __init__(self):
         # initialize variables
@@ -34,7 +34,7 @@ class UavRobotControl:
         self.cmd_vel_pub = rospy.Publisher("cmd_vel", Twist, queue_size=100)
         
         # Publisher sending messages of current position for easier debug
-        self.curr_pos_pub = rospy.Publisher("curr_pos", Pose, queue_size=10)
+        self.is_reached_pub = rospy.Publisher("is_reached", Bool, queue_size=100)
 
     def curr_pos_cb(self, msg = ModelStates()):
         # Extract the drone position from the gazebo model states 
@@ -69,7 +69,7 @@ class UavRobotControl:
 
             # Send command
             self.cmd_vel_pub.publish(curr_cmd_vel)
-            self.curr_pos_pub.publish(self.curr_pos)
+            self.is_reached_pub.publish(True)
             # self.test_add_height()
             rate.sleep()
             

@@ -3,7 +3,7 @@
 #include <planner_node/planner.h>
 #include <vector>
 #include <algorithm>
-#include <geometry_msgs/Pose.h>
+#include <std_msgs/Bool.h>
 using namespace octomap;
 using namespace std;
 
@@ -19,7 +19,7 @@ planner_rrt::planner_rrt(ros::NodeHandle nh): enable_(true)
     start();
   }
   this->nh_ = nh;
-
+  this->reached = false;
 }
 
 void planner_rrt::start()
@@ -45,21 +45,21 @@ void planner_rrt::publish_pos(float x, float y, float z){
 }
 
 
-void planner_rrt::subscribe_pos(){
+void planner_rrt::subscribe_reached(){
   // subscriber for current position
   // geometry_msgs::Pose msg_pos;
-  sub_ = nh_.subscribe("curr_pos", 10000, &planner_rrt::current_pos_cb, this);
+  sub_ = nh_.subscribe("is_reached", 10000, &planner_rrt::reached_cb, this);
   
 }
 
-void planner_rrt::current_pos_cb(geometry_msgs::Pose msg_pos){
-  octomap::point3d curr_pos((float)msg_pos.position.x , (float)msg_pos.position.y, (float)msg_pos.position.z); 
-  std::cout << "in the subscriber callbacks: " << curr_pos << std::endl;
-  this->current_pos = curr_pos;
+void planner_rrt::reached_cb(const std_msgs::Bool::ConstPtr& Reached){
+  // octomap::point3d curr_pos((float)msg_pos.position.x , (float)msg_pos.position.y, (float)msg_pos.position.z); 
+  std::cout << "in the subscriber callbacks: " << std::endl;
+  this->reached = Reached->data;
 }
 
-octomap::point3d planner_rrt::get_current_pos(){
-  return this->current_pos;
+bool planner_rrt::get_reach(){
+  return this->reached;
 }
 
 }
@@ -202,13 +202,13 @@ while (ros::ok())
     break;
   }
 
-  octomap::point3d cur_pos = node.get_current_pos();
-  std::cout << "current node:   " << cur_pos << std::endl;
-  node.publish_pos((float)x[counter], (float)y[counter], z_height);
+  node.subscribe_reached();
+  bool is_reached = node.get_reach();
+  std::cout << "is_reached:   " << is_reached << std::endl;
   ros::spinOnce();
 
   loop_rate.sleep();
-  node.subscribe_pos();
+  node.publish_pos((float)x[counter], (float)y[counter], z_height);
   loop_rate.sleep();
 
 	// query = point3d(x[counter], y[counter], 1.);
