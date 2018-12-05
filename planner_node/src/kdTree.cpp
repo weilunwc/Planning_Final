@@ -55,7 +55,7 @@ Node* kdTree::insert(vector<double> point,Node* n,int cd)
 	return n;
 }
 
-void kdTree::kNN(std::vector<double> point, Node* n, int cd, std::vector<double> nodeBound,double r)
+void kdTree::kNN(std::vector<double> point, Node* n, int cd, std::vector<double> nodeBound,double r,int k)
 {
 	vector< Node* > kNearestNodes;
 	vector< vector<double> > kNearest;

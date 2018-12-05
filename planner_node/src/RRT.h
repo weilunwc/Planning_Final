@@ -21,7 +21,7 @@
 
 #define EPS 0.3
 #define NUMVTX 100000
-#define GOALBIAS 20
+#define GOALBIAS 2
 
 /*****************************
  * Parameters of the planner *
@@ -29,7 +29,7 @@
 
 #define NUMOFDOF 3
 #define GOALSAMPLE 10    //10%
-#define EPSILON 0.2
+#define EPSILON 0.5
 #define CHECKLEN 0.05
 
 /****************************
@@ -61,6 +61,8 @@ class RRT
 
         double Distance(std::vector<double> p1, std::vector<double> p2);
         std::vector<std::vector<double> > exportPlan();
+		std::vector<double> start_;
+		std::vector<double> goal_;
 
 	private:
 		octomap::OcTree* octoTree;
@@ -68,9 +70,8 @@ class RRT
 		int xSize_;
 		int ySize_;
 		int zSize_;
-		std::vector<double> start_;
-		std::vector<double> goal_;
 		kdTree* tree_;
 };
+bool rayCast_collision(octomap::point3d origin, octomap::point3d des_pos, octomap::OcTree* tree);
 
 #endif

@@ -72,21 +72,24 @@ bool RRT::validNewConf(vector<double>  q_rand,vector<double>  q_near,vector<doub
 
 	// tree_->NN(q_new,tree_->root,0,tree_->BB->bounds);	
 	cout << "treesize: " << tree_->size << endl;
-
-  if(!check_result(result))
+	octomap::point3d ocNear;
+	ocNear = octomap::point3d(q_near[0], q_near[1], q_near[2]);
+	bool collResult = rayCast_collision(ocNear,query,octoTree);
+	//bool collResult = check_result(result);
+  if(!collResult)
   {
 	std::cout << "new: " << q_new[0] << " " << q_new[1] << " " << q_new[2] << std::endl;
 	tree_->insert(q_new,tree_->root,0);
   } 
-  return !check_result(result);
+  return !collResult;
 }
 
 vector<double>  RRT::random_config()
 {
 	vector<double> retVec;
-	retVec.push_back(genRand(-30,30));
-	retVec.push_back(genRand(-30,30));
-	retVec.push_back( genRand(0,3));
+	retVec.push_back(genRand(-30, 30));
+	retVec.push_back(genRand(-30, 30));
+	retVec.push_back( genRand(0,8));
 	return retVec;
 }
 
@@ -214,4 +217,22 @@ std::vector<std::vector<double> > RRT::exportPlan()
 	}
 	
 	return vector_plan;
+}
+
+
+bool rayCast_collision(octomap::point3d origin, octomap::point3d des_pos, octomap::OcTree* tree)
+{
+	double dr = 0.75; // drone radius
+  octomap::point3d ray_end;
+  octomap::point3d dir = origin - des_pos;
+  octomap::point3d dir_normed = dir;
+  dir_normed.normalize();
+  octomap::point3d extend_vec = octomap::point3d(dir_normed.x()*dr, dir_normed.y()*dr, dir_normed.z()*dr);
+	octomap::point3d new_des_pos = des_pos - extend_vec;
+	bool success = tree->castRay(origin, -dir, ray_end);
+	// std::cout << dir << -dir << dir_normed << extend_vec
+	//  << des_pos << new_des_pos << ray_end  << " "
+	//  << origin.distance(new_des_pos) << " " << origin.distance(ray_end) << std::endl;
+	// return success ? origin.distance(new_des_pos) >= origin.distance(ray_end) : false;
+	return origin.distance(new_des_pos) >= origin.distance(ray_end);
 }

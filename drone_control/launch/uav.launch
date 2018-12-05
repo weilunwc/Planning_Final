@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="robot_name" default="robot"/>
-    <arg name="init_pose" default="-x 0 -y 0 -z 0"/>
+    <arg name="init_pose" default="-x -0.0 -y -0.0 -z 1.0"/>
     <param name="height" value="1.0"/>
     <!-- this driver configs loads the robot for gazebo. -->
     
-    <param name="height" value="1"/>
+    <param name="height" value="2"/>
     <include file="$(find hector_quadrotor_gazebo)/launch/test_spawn_quadrotor.launch" >
         <arg name="name" value="$(arg robot_name)" />
         <arg name="model" value="$(find hector_quadrotor_description)/urdf/test_quadrotor.gazebo.xacro"/>

@@ -71,7 +71,7 @@ class kdTree
 		Node* root = NULL;
 		Node* insert(std::vector<double> point,Node* n,int cd);
 		void NN(std::vector<double> point, Node* n, int cd, std::vector<double> BB);
-		void kNN(std::vector<double> point, Node* n, int cd, std::vector<double> nodeBound,double r);
+		void kNN(std::vector<double> point, Node* n, int cd, std::vector<double> nodeBound,double r,int k);
 		double distance(std::vector<double> p1,std::vector<double> p2);
 		double distance2Box(std::vector<double> p1, std::vector<double> BB);
 		void deleteTree(Node* n);

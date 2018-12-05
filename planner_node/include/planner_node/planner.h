@@ -8,7 +8,8 @@
 #include <octomap/octomap.h>
 #include <octomap/OcTree.h>
 #include <std_msgs/Bool.h>
-
+#include <geometry_msgs/PoseStamped.h>
+#include <nav_msgs/Path.h>
 
 namespace planner_node
 {
@@ -17,6 +18,7 @@ class planner_rrt
  public:
   explicit planner_rrt(ros::NodeHandle nh);
   void publish_pos(float x, float y, float z);
+  void publish_path(std::vector<double> x, std::vector<double> y, std::vector<double> z);
   void subscribe_reached();
   void reached_cb(const std_msgs::Bool::ConstPtr& Reached);
   bool get_reach();
