@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(planner_node)
-add_compile()
-find_package(catkin REQUIRED COMPONENTS dynamic_reconfigure message_generation roscpp rosgraph_msgs rospy std_msgs)
+set (CMAKE_CXX_STANDARD 11)
+#add_compile()
+find_package(catkin REQUIRED COMPONENTS dynamic_reconfigure message_generation roscpp rosgraph_msgs rospy std_msgs geometry_msgs)
 
 
 add_message_files(
@@ -16,7 +17,7 @@ generate_messages(
 
 
 catkin_package(
-  CATKIN_DEPENDS dynamic_reconfigure message_runtime roscpp rosgraph_msgs rospy std_msgs
+  CATKIN_DEPENDS dynamic_reconfigure message_runtime roscpp rosgraph_msgs rospy std_msgs geometry_msgs
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
