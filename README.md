@@ -18,7 +18,7 @@ sudo apt-get install ros-kinetic-laser-geometry
 sudo apt-get install ros-kinetic-tf-conversions
 sudo apt-get install ros-kinetic-tf2-geometry-msgs
 sudo apt-get install ros-kinetic-joy
-``` 
+```
 
 The drone package source code is all inside the hector_package folder, you should be able to catkin_make and compile.
 
@@ -40,4 +40,3 @@ Starting from a 2D map, we will need to use the map server package
 ```
 sudp apt-get install ros-kinetic-map-server
 ```
-
